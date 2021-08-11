@@ -1,7 +1,7 @@
-import * as React from 'react';
-import styles from './AlertaDeNovedades.module.scss';
-import { IAlertaDeNovedadesProps } from './IAlertaDeNovedadesProps';
-import { escape } from '@microsoft/sp-lodash-subset';
+import * as React from "react";
+import styles from "./AlertaDeNovedades.module.scss";
+import { IAlertaDeNovedadesProps } from "./IAlertaDeNovedadesProps";
+import { escape } from "@microsoft/sp-lodash-subset";
 import {
   Coachmark,
   DirectionalHint,
@@ -9,47 +9,39 @@ import {
   IDropdownOption,
   TeachingBubbleContent,
   mergeStyleSets,
-} from '@fluentui/react';
+} from "@fluentui/react";
+import { FunctionComponent, useState, useEffect } from "react";
 
-export interface IAlertaDeNovedadesState  {
-  positioningContainerProps : {
-    directionalHint: DirectionalHint;
-    doNotLayer: boolean;
-  },
-  targetButton: HTMLDivElement;
-  teachingBubbleVisible: boolean;
-}
+const AlertaDeNovedades: FunctionComponent<IAlertaDeNovedadesProps> = (
+  props
+) => {
+  console.log("al principio de la FN", props)
+  const [description, setDescription] = useState<string>(props.description?props.description:"");
+  const [teachingBubbleVisible, setTeachingBubbleVisible] = useState<boolean>(true);
+  const [option, setOption] = useState<any>(props.option?props.option:0);
+  const [date, setDate] = useState<Date>(null)
 
-export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedadesProps, IAlertaDeNovedadesState> {
+  useEffect(() => {
+    console.log("Description: ", description, "Teaching: ", teachingBubbleVisible, "Option: ", option)
+    setDescription(props.description);
+    setOption(props.option);
+    setTeachingBubbleVisible(true);
 
-  constructor(props:IAlertaDeNovedadesProps){
-    super(props);
-    this.state = {
-      positioningContainerProps:null,
-      targetButton:null,
-      teachingBubbleVisible:true
-    }
-  }
-  public toggleTeachingBubbleVisible = () => {
-    this.setState({
-      teachingBubbleVisible:false
-    })
-  }
-  public componentDidMount(){
-    /* this.setState({
-      positioningContainerProps: {directionalHint:DirectionalHint.rightBottomEdge, doNotLayer:false}
-    }) */
-  }
-  public render(): React.ReactElement<IAlertaDeNovedadesProps> {
-    console.log("opciones ", this.props.option )
-    let teachingBubbleVisible = this.state.teachingBubbleVisible
-    return (
-      <div className={ styles.alertaDeNovedades } id="targetButton">
-        {
-          teachingBubbleVisible && (
-          <Coachmark
+    return () => {
+      console.log("en Return", props)
+    };
+  }, [props]);
+
+  const toggleTeachingBubbleVisible = () => {
+    setTeachingBubbleVisible(false);
+  };
+
+  return (
+    <div className={styles.alertaDeNovedades} id="targetButton">
+      {teachingBubbleVisible && (
+        <Coachmark
           target="#targetButton"
-          positioningContainerProps={{directionalHint:this.props.option}}
+          positioningContainerProps={{ directionalHint: option, doNotLayer:true }}
           ariaAlertText="A coachmark has appeared"
           ariaDescribedBy="coachmark-desc1"
           ariaLabelledBy="coachmark-label1"
@@ -62,15 +54,14 @@ export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedade
             closeButtonAriaLabel="Close"
             ariaDescribedBy="example-description1"
             ariaLabelledBy="example-label1"
-            onDismiss={this.toggleTeachingBubbleVisible}
+            onDismiss={toggleTeachingBubbleVisible}
           >
-            {this.props.description}
+            {description}
           </TeachingBubbleContent>
         </Coachmark>
-          )
-        }
-         
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+  );
+};
+
+export default AlertaDeNovedades;

@@ -16,16 +16,20 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'AlertaDeNovedadesWebPartStrings';
 import AlertaDeNovedades from './components/AlertaDeNovedades';
 import { IAlertaDeNovedadesProps } from './components/IAlertaDeNovedadesProps';
+import { PropertyFieldDateTimePicker, DateConvention, TimeConvention,IDateTimeFieldValue  } from '@pnp/spfx-property-controls/lib/PropertyFieldDateTimePicker';
 
 export interface IAlertaDeNovedadesWebPartProps {
   description: string;
   option: any
-  context: WebPartContext
+  context: WebPartContext,
+  datetime: IDateTimeFieldValue;
 }
 
 export default class AlertaDeNovedadesWebPart extends BaseClientSideWebPart<IAlertaDeNovedadesWebPartProps> {
 
   public render(): void {
+
+    console.log("paso props", this.properties.option)
     const element: React.ReactElement<IAlertaDeNovedadesProps> = React.createElement(
       AlertaDeNovedades,
       {
@@ -45,7 +49,7 @@ export default class AlertaDeNovedadesWebPart extends BaseClientSideWebPart<IAle
   protected get disableReactivePropertyChanges(): boolean {
     return true;
     }
-    
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -61,20 +65,23 @@ export default class AlertaDeNovedadesWebPart extends BaseClientSideWebPart<IAle
                 }),
                 PropertyPaneDropdown('option', {
                   label:"Seleccione una opción",
-                  options:[{ text: 'Top left edge', key: DirectionalHint.topLeftEdge },
-                  { text: 'Top center', key: DirectionalHint.topCenter },
-                  { text: 'Top right edge', key: DirectionalHint.topRightEdge },
-                  { text: 'Top auto edge', key: DirectionalHint.topAutoEdge },
-                  { text: 'Bottom left edge', key: DirectionalHint.bottomLeftEdge },
-                  { text: 'Bottom center', key: DirectionalHint.bottomCenter },
-                  { text: 'Bottom right edge', key: DirectionalHint.bottomRightEdge },
-                  { text: 'Bottom auto edge', key: DirectionalHint.bottomAutoEdge },
-                  { text: 'Left top edge', key: DirectionalHint.leftTopEdge },
-                  { text: 'Left center', key: DirectionalHint.leftCenter },
-                  { text: 'Left bottom edge', key: DirectionalHint.leftBottomEdge },
-                  { text: 'Right top edge', key: DirectionalHint.rightTopEdge },
-                  { text: 'Right center', key: DirectionalHint.rightCenter },
-                  { text: 'Right bottom edge', key: DirectionalHint.rightBottomEdge },]
+                  options:[{ text: 'Borde superior izquierdo', key: DirectionalHint.topLeftEdge },
+                  { text: 'Arriba centrado', key: DirectionalHint.topCenter },
+                  { text: 'Borde superior derecho', key: DirectionalHint.topRightEdge },
+                  { text: 'Borde inferior izquierdo', key: DirectionalHint.bottomLeftEdge },
+                  { text: 'Abajo centrado', key: DirectionalHint.bottomCenter },
+                  { text: 'Borde inferior derecho', key: DirectionalHint.bottomRightEdge }]
+                }),
+                PropertyFieldDateTimePicker('datetime', {
+                  label: 'Seleccione fecha limite',
+                  initialDate: this.properties.datetime,
+                  dateConvention: DateConvention.Date,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'dateTimeFieldId',
+                  showLabels: false
                 })
               ]
             }
