@@ -3,7 +3,7 @@
   "solution": {
     "name": "alerta-novedades-client-side-solution",
     "id": "4fe6ce3c-1c7d-4189-ae2b-41b44a50f202",
-    "version": "1.0.0.0",
+    "version": "1.0.0.2",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,

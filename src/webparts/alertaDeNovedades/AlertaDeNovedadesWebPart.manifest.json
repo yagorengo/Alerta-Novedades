@@ -17,11 +17,11 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Other
     "group": { "default": "Other" },
-    "title": { "default": "alertaDeNovedades" },
-    "description": { "default": "alertaDeNovedades description" },
-    "officeFabricIconFontName": "Page",
+    "title": { "default": "Alerta Novedades" },
+    "description": { "default": "Despliega una notificacion de una novedad" },
+    "officeFabricIconFontName": "Ringer",
     "properties": {
-      "description": "alertaDeNovedades"
+      "description": "Novedad"
     }
   }]
 }

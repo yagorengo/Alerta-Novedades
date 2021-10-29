@@ -2,6 +2,9 @@ import * as React from 'react';
 import styles from './AlertaDeNovedades.module.scss';
 import { IAlertaDeNovedadesProps } from './IAlertaDeNovedadesProps';
 import { escape } from '@microsoft/sp-lodash-subset';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
+import * as moment from 'moment';
+
 import {
   Coachmark,
   DirectionalHint,
@@ -18,7 +21,10 @@ export interface IAlertaDeNovedadesState  {
   },
   targetButton: HTMLDivElement;
   teachingBubbleVisible: boolean;
+  description:string;
+  spinner:boolean;
 }
+
 
 export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedadesProps, IAlertaDeNovedadesState> {
 
@@ -27,7 +33,9 @@ export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedade
     this.state = {
       positioningContainerProps:null,
       targetButton:null,
-      teachingBubbleVisible:true
+      teachingBubbleVisible:true,
+      description:"",
+      spinner:false
     }
   }
   public toggleTeachingBubbleVisible = () => {
@@ -36,20 +44,48 @@ export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedade
     })
   }
   public componentDidMount(){
-    /* this.setState({
-      positioningContainerProps: {directionalHint:DirectionalHint.rightBottomEdge, doNotLayer:false}
-    }) */
+    let inRange= this.validateDate(this.props.date?this.props.date:null)
+     this.setState({
+      positioningContainerProps: {directionalHint:this.props.option, doNotLayer:false},
+      description: this.props.description?this.props.description:"",
+      teachingBubbleVisible: inRange
+    }) 
+  }
+
+  public componentDidUpdate(prevProps, prevState){
+    
+    if(prevProps != this.props){
+      this.setState({spinner:true})
+      setTimeout(this.updateState,30,this.props)
+      
+    }
+  }
+  public validateDate = (date:Date):boolean => {
+    let res = moment().isBefore(date);
+    return res
+  }
+  public updateState = (props)=>{
+
+    let isValidDate= this.validateDate(props.date)
+    this.setState({
+      positioningContainerProps: {directionalHint:props.option, doNotLayer:false}, 
+      description: props.description,
+      teachingBubbleVisible:isValidDate,
+      spinner:false
+    })
   }
   public render(): React.ReactElement<IAlertaDeNovedadesProps> {
-    console.log("opciones ", this.props.option )
+    console.log("opciones ", this.state )
     let teachingBubbleVisible = this.state.teachingBubbleVisible
     return (
       <div className={ styles.alertaDeNovedades } id="targetButton">
         {
-          teachingBubbleVisible && (
+         this.state.spinner?
+         <Spinner size={SpinnerSize.xSmall} ></Spinner>
+         : teachingBubbleVisible && (
           <Coachmark
           target="#targetButton"
-          positioningContainerProps={{directionalHint:this.props.option}}
+          positioningContainerProps={this.state.positioningContainerProps}
           ariaAlertText="A coachmark has appeared"
           ariaDescribedBy="coachmark-desc1"
           ariaLabelledBy="coachmark-label1"
@@ -64,10 +100,10 @@ export default class AlertaDeNovedades extends React.Component<IAlertaDeNovedade
             ariaLabelledBy="example-label1"
             onDismiss={this.toggleTeachingBubbleVisible}
           >
-            {this.props.description}
+            {this.state.description}
           </TeachingBubbleContent>
         </Coachmark>
-          )
+         )
         }
          
       </div>
